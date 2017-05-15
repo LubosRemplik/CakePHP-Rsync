@@ -39,6 +39,13 @@ class RsyncShell extends Shell
     protected $exitStatus = null;
 
     /**
+     * Attribute: output
+     *
+     * @var mixed
+     */
+    protected $output = null;
+
+    /**
      * Manage the available sub-commands along with their arguments and help
      *
      * @see http://book.cakephp.org/3.0/en/console-and-shells.html#configuring-options-and-generating-help
@@ -343,17 +350,12 @@ class RsyncShell extends Shell
             }
         }
 
-        if ($code !== 0) {
-            $this->out(sprintf('<error>Exit code %s</error>', $code));
-            $this->exitStatus = $code;
+        if (!empty($output)) {
+            $output = explode(PHP_EOL, trim($output));
         }
 
-        if (!empty($output) && !$options['showBuffer']) {
-            $output = explode(PHP_EOL, trim($output));
-            foreach ($output as $out) {
-                $this->out($out);
-            }
-        }
+        $this->exitStatus = $code;
+        $this->output = $output;
 
         return $code === 0
             ? $output
@@ -414,6 +416,21 @@ class RsyncShell extends Shell
 
         $prompt = true;
         $output = $this->execute($cmd['command'], compact('remote', 'prompt'));
+
+        if ($this->exitStatus !== 0) {
+            $this->out(sprintf(
+                '<error>Exit code %s</error> for "%s" command (remote: %s)', 
+                $this->exitStatus, 
+                $cmd['command'],
+                $remote ? '<error>yes</error>' : 'no'
+            ));
+        }
+
+        if ($this->output) {
+            foreach ($this->output as $out) {
+                $this->out($out);
+            }
+        }
     }
 
     /**
