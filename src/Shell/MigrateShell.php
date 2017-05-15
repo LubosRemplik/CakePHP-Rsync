@@ -24,9 +24,11 @@ class MigrateShell extends Shell
         $parser = parent::getOptionParser();
         $parser->addArgument('input', [
             'help' => 'Input file with json configuration',
+            'required' => true,
         ]);
         $parser->addArgument('output', [
             'help' => 'Output file with yaml configuration',
+            'required' => true,
         ]);
 
         return $parser;
