@@ -442,9 +442,7 @@ class RsyncShell extends Shell
      */
     protected function sshConnect()
     {
-        if ($this->ssh !== null) {
-            return $this->ssh;
-        }
+        $this->ssh = null;
 
         if (!isset($this->config['ssh']['host'])) {
             throw new \Exception('Missing SSH host');
