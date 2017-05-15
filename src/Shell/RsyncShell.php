@@ -356,7 +356,7 @@ class RsyncShell extends Shell
         }
 
         return $code === 0
-            ? $output 
+            ? $output
             : false;
     }
 

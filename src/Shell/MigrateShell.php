@@ -32,6 +32,15 @@ class MigrateShell extends Shell
         return $parser;
     }
 
+    /**
+     * Method: main
+     *
+     * Reads json input file and writes yaml output file
+     *
+     * @param string $input Json input file
+     * @param string $output Yaml output file
+     * @return void
+     */
     public function main($input, $output)
     {
         if (!file_exists($input)) {
@@ -54,7 +63,7 @@ class MigrateShell extends Shell
                 ? $config['name']
                 : 'Unknown';
 
-            // remote 
+            // remote
             if (isset($config['pre-cmd']['remote']['host'])) {
                 $remote = $config['pre-cmd']['remote'];
                 if (isset($remote['key'])) {
@@ -128,7 +137,7 @@ class MigrateShell extends Shell
         $yaml = str_replace("''", '"', $yaml);
         if (file_put_contents($output, $yaml)) {
             $this->out(sprintf(
-                '<success>Done</success> - %s file written. <error>Please review before use!</error>', 
+                '<success>Done</success> - %s file written. <error>Please review before use!</error>',
                 $output
             ));
         }
