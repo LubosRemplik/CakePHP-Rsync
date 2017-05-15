@@ -330,6 +330,7 @@ class RsyncShell extends Shell
         } else {
             try {
                 $process = new Process($command);
+                $process->setTimeout(false);
                 $process->run(function ($type, $buffer) use ($options) {
                     if ($options['showBuffer']) {
                         $this->out($buffer, 0);
