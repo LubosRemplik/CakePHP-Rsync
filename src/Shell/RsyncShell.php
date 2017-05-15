@@ -344,11 +344,19 @@ class RsyncShell extends Shell
         }
 
         if ($code !== 0) {
+            $this->out(sprintf('<error>Exit code %s</error>', $code));
             $this->exitStatus = $code;
         }
 
+        if (!empty($output) && !$options['showBuffer']) {
+            $output = explode(PHP_EOL, trim($output));
+            foreach ($output as $out) {
+                $this->out($out);
+            }
+        }
+
         return $code === 0
-            ? explode(PHP_EOL, trim($output))
+            ? $output 
             : false;
     }
 
