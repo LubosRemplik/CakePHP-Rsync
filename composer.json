@@ -1,0 +1,33 @@
+{
+    "name": "lubos/cakephp-rsync",
+    "description": "Rsync plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "rsync", "plugin"],
+    "homepage": "https://github.com/LubosRemplik/CakePHP-Rsync",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lubos Remplik",
+            "homepage": "http://lubos.me"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "cakephp/cakephp": ">=3.3.2 <4.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "cakephp/cakephp-codesniffer": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rsync\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rsync\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
