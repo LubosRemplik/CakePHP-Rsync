@@ -75,7 +75,7 @@ class RsyncShell extends Shell
      * Reads yaml file and executes given rsync commands
      *
      * @param string $file Yaml file
-     * @return void
+     * @return bool|void
      */
     public function main($file = null)
     {
@@ -402,7 +402,7 @@ class RsyncShell extends Shell
                 $cmd['command'] = Text::insert($cmd['command'], $connection->config());
             }
         }
-        
+
         $prompt = true;
         $output = $this->execute($cmd['command'], compact('remote', 'prompt'));
     }
