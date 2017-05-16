@@ -261,7 +261,7 @@ class RsyncShell extends Shell
         $config += [
             'name' => false,
             'params' => [
-                "-azh --delete --stats"
+                "-azh --delete --stats --progress"
             ],
             'ssh' => [],
         ];
