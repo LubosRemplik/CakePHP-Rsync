@@ -126,6 +126,12 @@ class RsyncShell extends Shell
             $this->out($message);
             $this->hr();
 
+            // try remote, show error and continue with others when not able to connect
+            if (isset($this->config['ssh']['host']) && !$this->sshConnect()) {
+                $this->err('Unable to ssh connect, continue with another task.');
+                continue;
+            }
+
             // execute pre rsync commands
             if (isset($this->config['pre-rsync-cmd']) && !$this->params['disable-pre-post']) {
                 foreach ($this->config['pre-rsync-cmd'] as $cmd) {
