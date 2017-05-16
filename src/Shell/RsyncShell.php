@@ -86,6 +86,9 @@ class RsyncShell extends Shell
      */
     public function main($file = null)
     {
+        // microtime for script time
+        $scriptStart = microtime(true);
+
         if (!file_exists($file)) {
             $file = getcwd() . DS . 'rsync.yml';
         }
@@ -243,6 +246,11 @@ class RsyncShell extends Shell
             $this->out($message);
             $this->hr();
         }
+        $message = sprintf(
+            '<success>Done. Script execution time %0.2fs</success>',
+            microtime(true) - $scriptStart
+        );
+        $this->out($message);
     }
 
     /**
