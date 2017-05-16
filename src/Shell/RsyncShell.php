@@ -419,8 +419,8 @@ class RsyncShell extends Shell
 
         if ($this->exitStatus !== 0) {
             $this->out(sprintf(
-                '<error>Exit code %s</error> for "%s" command (remote: %s)', 
-                $this->exitStatus, 
+                '<error>Exit code %s</error> for "%s" command (remote: %s)',
+                $this->exitStatus,
                 $cmd['command'],
                 $remote ? '<error>yes</error>' : 'no'
             ));
