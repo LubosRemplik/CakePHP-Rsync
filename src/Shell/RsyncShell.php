@@ -214,6 +214,7 @@ class RsyncShell extends Shell
                 $count = count($folders);
                 while ($count >= $this->config['dest']['copies']) {
                     $folder = array_shift($folders);
+                    $count = count($folders);
                     $command = sprintf(
                         'cd %s && rm -Rf ../%s',
                         $this->config['dest']['path'],
