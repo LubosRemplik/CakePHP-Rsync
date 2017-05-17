@@ -2,6 +2,7 @@
 namespace Rsync\Shell;
 
 use Cake\Console\Shell;
+use Cake\Utility\Hash;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -29,6 +30,17 @@ class MigrateShell extends Shell
         $parser->addArgument('output', [
             'help' => 'Output file with yaml configuration',
             'required' => true,
+        ]);
+        $parser->addSubcommand('sort', [
+            'help' => 'Sorts input yml file by name abc',
+            'parser' => [
+                'arguments' => [
+                    'input' => [
+                        'help' => 'Input file with yaml configuration',
+                        'required' => true
+                    ]
+                ]
+            ]
         ]);
 
         return $parser;
@@ -141,6 +153,33 @@ class MigrateShell extends Shell
             $this->out(sprintf(
                 '<success>Done</success> - %s file written. <error>Please review before use!</error>',
                 $output
+            ));
+        }
+    }
+
+    /**
+     * Method: sort
+     *
+     * Reads yaml input file, sort and rewrites
+     *
+     * @param string $input Yaml input file
+     * @return void
+     */
+    public function sort($input)
+    {
+        if (!file_exists($input)) {
+            throw new \Exception('Missing yaml config file');
+        }
+
+        $results = Yaml::parse(file_get_contents($input));
+        $results = Hash::sort($results, '{n}.name');
+
+        $yaml = Yaml::dump($results, 9999);
+        $yaml = str_replace("''", '"', $yaml);
+        if (file_put_contents($input, $yaml)) {
+            $this->out(sprintf(
+                '<success>Done</success> - %s file written. <error>Please review before use!</error>',
+                $input
             ));
         }
     }
