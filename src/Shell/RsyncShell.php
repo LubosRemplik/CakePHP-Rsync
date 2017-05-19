@@ -197,18 +197,8 @@ class RsyncShell extends Shell
             );
             $output = $this->execute($command, ['prompt' => true, 'showBuffer' => true]);
 
-            // clean up
             if ($output === false) {
-                if ($subdir) {
-                    $remote = $this->config['dest']['remote'];
-                    $prompt = true;
-                    $this->execute(
-                        sprintf('rm -Rf %s', $this->config['dest']['path']),
-                        compact('remote', 'prompt')
-                    );
-                }
-
-                return false;
+                $this->err(sprintf('Rsync failed. Exit code %s.', $this->exitStatus));
             }
             if ($subdir) {
                 $count = count($folders);
