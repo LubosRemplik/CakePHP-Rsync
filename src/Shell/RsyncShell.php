@@ -3,6 +3,7 @@ namespace Rsync\Shell;
 
 use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
+use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use phpseclib\Crypt\RSA;
@@ -292,6 +293,12 @@ class RsyncShell extends Shell
         ];
         if (!is_array($config['params'])) {
             $config['params'] = [$config['params']];
+        }
+        if ($config['src']['remote'] == false && strstr($config['src']['path'], ':latest')) {
+            $folder = explode(':latest', $config['src']['path'])[0];
+            $dir = new Folder($folder);
+            $latest =  end($dir->read()[0]);
+            $config['src']['path'] = str_replace(':latest', $latest, $config['src']['path']);
         }
 
         $this->config = $config;
