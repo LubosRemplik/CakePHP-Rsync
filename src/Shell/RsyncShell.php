@@ -297,7 +297,7 @@ class RsyncShell extends Shell
         if ($config['src']['remote'] == false && strstr($config['src']['path'], ':latest')) {
             $folder = explode(':latest', $config['src']['path'])[0];
             $dir = new Folder($folder);
-            $latest =  end($dir->read()[0]);
+            $latest = end($dir->read()[0]);
             $config['src']['path'] = str_replace(':latest', $latest, $config['src']['path']);
         }
 
