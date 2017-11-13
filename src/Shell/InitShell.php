@@ -37,7 +37,7 @@ class InitShell extends Shell
     /**
      * Method: main
      *
-     * @param string $target
+     * @param string $target Target path to the yml file which should be generated.
      * @return void
      */
     public function main($target = 'rsync.yml')
@@ -57,10 +57,10 @@ class InitShell extends Shell
 
         $yaml = Yaml::dump($results, 9999);
         $yaml = str_replace("''", '"', $yaml);
-        if (file_put_contents($input, $yaml)) {
+        if (file_put_contents($target, $yaml)) {
             $this->out(sprintf(
                 '<success>Done</success> - %s file written. <error>Please review before use!</error>',
-                $input
+                $target
             ));
         }
     }
@@ -68,7 +68,7 @@ class InitShell extends Shell
     /**
      * Method: add
      *
-     * @return void
+     * @return array
      */
     protected function add()
     {
