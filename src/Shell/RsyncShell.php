@@ -458,6 +458,11 @@ class RsyncShell extends Shell
     {
         $this->ssh = null;
 
+        // fix for home path directory
+        if (isset($this->config['ssh']['privateKey'])) {
+            $this->config['ssh']['privateKey'] = str_replace('~/', getenv("HOME"), $this->config['ssh']['privateKey']);
+        }
+
         if (!isset($this->config['ssh']['host'])) {
             throw new \Exception('Missing SSH host');
         }
