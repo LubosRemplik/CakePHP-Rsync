@@ -432,12 +432,15 @@ class RsyncShell extends Shell
         $output = $this->execute($cmd['command'], compact('remote', 'prompt'));
 
         if ($this->exitStatus !== 0) {
-            $this->out(sprintf(
-                '<error>Exit code %s</error> for "%s" command (remote: %s)',
+            $out = sprintf(
+                '<error>Exit code %s:</error> for "%s" command (remote: %s)',
                 $this->exitStatus,
                 $cmd['command'],
                 $remote ? '<error>yes</error>' : 'no'
-            ));
+            );
+            $this->out($out);
+
+            $this->log(strip_tags($out), 'error');
         }
 
         if ($this->output) {
