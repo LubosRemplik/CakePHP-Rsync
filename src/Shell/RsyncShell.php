@@ -151,7 +151,7 @@ class RsyncShell extends Shell
             );
 
             // if copies are required create and change path to new subfolder
-            $subdir = false;
+            $folders = false;
             if ($this->config['dest']['copies'] > 1) {
                 $folders = $this->execute(
                     sprintf('cd %s && ls -1d */ 2>/dev/null', $this->config['dest']['path']),
@@ -161,7 +161,6 @@ class RsyncShell extends Shell
                     sort($folders);
                     $this->config['params'][] = sprintf("--link-dest='../%s'", end($folders));
                 }
-                $subdir = true;
                 $this->config['dest']['path'] .= date('ymd_His') . DS;
             }
 
@@ -201,7 +200,8 @@ class RsyncShell extends Shell
             if ($output === false) {
                 $this->err(sprintf('Rsync failed. Exit code %s.', $this->exitStatus));
             }
-            if ($subdir) {
+            // delete only when multiple folders
+            if ($folders) {
                 $count = count($folders);
                 while ($count >= $this->config['dest']['copies']) {
                     $folder = array_shift($folders);
