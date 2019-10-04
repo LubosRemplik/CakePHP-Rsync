@@ -134,7 +134,7 @@ class RsyncShell extends Shell
 
             // try remote, show error and continue with others when not able to connect
             if (isset($this->config['ssh']['host']) && !$this->sshConnect()) {
-                $message = 'Unable to ssh connect, continue with another task.';
+                $message = sprintf('Task: %s; Unable to ssh connect, continue with another task.', $name ?? 'Unknown');
                 $this->err($message);
                 $this->log($message, 'error');
                 continue;
@@ -202,7 +202,7 @@ class RsyncShell extends Shell
             $output = $this->execute($command, ['prompt' => true, 'showBuffer' => true]);
 
             if ($output === false) {
-                $message = sprintf('Rsync failed. Exit code %s.', $this->exitStatus);
+                $message = sprintf('Rsync %s failed. Exit code %s.', $name ?? 'Unknown', $this->exitStatus);
                 $this->err($message);
                 $this->log($message, 'error');
             }
@@ -352,7 +352,7 @@ class RsyncShell extends Shell
                 $output = $ssh->exec($command);
                 $code = $ssh->getExitStatus();
             } catch (\Exception $e) {
-                $message = sprintf("Unable to execute SSH command: %s", $e->getMessage());
+                $message = sprintf("Unable to execute SSH command: %s; Message: %s", $command, $e->getMessage());
                 $this->error($message);
                 $this->log($message, 'error');
             }
@@ -368,7 +368,7 @@ class RsyncShell extends Shell
                 $output = $process->getOutput();
                 $code = $process->getExitCode();
             } catch (\Exception $e) {
-                $message = sprintf("Unable to execute local command: %s", $e->getMessage());
+                $message = sprintf("Unable to execute local command: %s; Message: %s", $command, $e->getMessage());
                 $this->error($message);
                 $this->log($message, 'error');
             }
