@@ -101,7 +101,9 @@ class RsyncShell extends Shell
         try {
             $rsyncs = Yaml::parse(file_get_contents($file));
         } catch (ParseException $e) {
-            $this->error(sprintf("Unable to parse the YAML string: %s", $e->getMessage()));
+            $message = sprintf("Unable to parse the YAML string: %s", $e->getMessage());
+            $this->error($message);
+            $this->log($message, 'error');
         }
 
         if (!isset($rsyncs[0])) {
@@ -132,7 +134,9 @@ class RsyncShell extends Shell
 
             // try remote, show error and continue with others when not able to connect
             if (isset($this->config['ssh']['host']) && !$this->sshConnect()) {
-                $this->err('Unable to ssh connect, continue with another task.');
+                $message = 'Unable to ssh connect, continue with another task.';
+                $this->err($message);
+                $this->log($message, 'error');
                 continue;
             }
 
@@ -198,7 +202,9 @@ class RsyncShell extends Shell
             $output = $this->execute($command, ['prompt' => true, 'showBuffer' => true]);
 
             if ($output === false) {
-                $this->err(sprintf('Rsync failed. Exit code %s.', $this->exitStatus));
+                $message = sprintf('Rsync failed. Exit code %s.', $this->exitStatus);
+                $this->err($message);
+                $this->log($message, 'error');
             }
             // delete only when multiple folders
             if ($folders) {
@@ -346,7 +352,9 @@ class RsyncShell extends Shell
                 $output = $ssh->exec($command);
                 $code = $ssh->getExitStatus();
             } catch (\Exception $e) {
-                $this->error(sprintf("Unable to execute SSH command: %s", $e->getMessage()));
+                $message = sprintf("Unable to execute SSH command: %s", $e->getMessage());
+                $this->error($message);
+                $this->log($message, 'error');
             }
         } else {
             try {
@@ -360,7 +368,9 @@ class RsyncShell extends Shell
                 $output = $process->getOutput();
                 $code = $process->getExitCode();
             } catch (\Exception $e) {
-                $this->error(sprintf("Unable to execute local command: %s", $e->getMessage()));
+                $message = sprintf("Unable to execute local command: %s", $e->getMessage());
+                $this->error($message);
+                $this->log($message, 'error');
             }
         }
 
@@ -439,7 +449,6 @@ class RsyncShell extends Shell
                 $remote ? '<error>yes</error>' : 'no'
             );
             $this->out($out);
-
             $this->log(strip_tags($out), 'error');
         }
 
