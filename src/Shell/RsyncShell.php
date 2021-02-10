@@ -304,7 +304,59 @@ class RsyncShell extends Shell
             $folder = explode(':latest', $config['src']['path'])[0];
             $dir = new Folder($folder);
             $latest = end($dir->read()[0]);
+            $latest = substr($latest, 0, strlen($latest) - 1); // removing ending slash
             $config['src']['path'] = str_replace(':latest', $latest, $config['src']['path']);
+        }
+        if (isset($config['pre-rsync-cmd'])) {
+            foreach ($config['pre-rsync-cmd'] as $key => $cmd) {
+                if (!isset($cmd['command'])) {
+                    $cmd = ['command' => $cmd];
+                }
+                $cmd += [
+                    'remote' => false
+                ];
+                $config['pre-rsync-cmd'][$key] = $cmd;
+            }
+        }
+        if (isset($config['post-rsync-cmd'])) {
+            foreach ($config['post-rsync-cmd'] as $key => $cmd) {
+                if (!isset($cmd['command'])) {
+                    $cmd = ['command' => $cmd];
+                }
+                $cmd += [
+                    'remote' => false
+                ];
+                $config['post-rsync-cmd'][$key] = $cmd;
+            }
+        }
+
+        // replacing tidle with home directory
+        // only privateKey and local pre-rsync-cmd, post-rsync-cmd, src, dest
+        $home = getenv("HOME");
+        if (isset($config['ssh']['privateKey'])) {
+            $config['ssh']['privateKey'] = str_replace('~', $home, $config['ssh']['privateKey']);
+        }
+        if ($config['src']['remote'] === false) {
+            $config['src']['path'] = str_replace('~', $home, $config['src']['path']);
+        }
+        if ($config['dest']['remote'] === false) {
+            $config['dest']['path'] = str_replace('~', $home, $config['dest']['path']);
+        }
+        if (isset($config['pre-rsync-cmd'])) {
+            foreach ($config['pre-rsync-cmd'] as $key => $cmd) {
+                if ($cmd['remote'] === false) {
+                    $cmd['command'] = str_replace('~', $home, $cmd['command']);
+                }
+                $config['pre-rsync-cmd'][$key] = $cmd;
+            }
+        }
+        if (isset($config['post-rsync-cmd'])) {
+            foreach ($config['post-rsync-cmd'] as $key => $cmd) {
+                if ($cmd['remote'] === false) {
+                    $cmd['command'] = str_replace('~', $home, $cmd['command']);
+                }
+                $config['post-rsync-cmd'][$key] = $cmd;
+            }
         }
 
         $this->config = $config;
