@@ -58,7 +58,7 @@ class RsyncShell extends Shell
         $parser = parent::getOptionParser();
         $parser->addArgument('file', [
             'help' => 'File with YAML configuration',
-            'required' => false
+            'required' => false,
         ]);
         $parser->addOption('force', [
             'short' => 'f',
@@ -281,7 +281,7 @@ class RsyncShell extends Shell
         ];
         $config['ssh'] += [
             'port' => 22,
-            'timeout' => 5 * 60
+            'timeout' => 5 * 60,
         ];
         if (!is_array($config['src'])) {
             $config['src'] = ['path' => $config['src']];
@@ -313,7 +313,7 @@ class RsyncShell extends Shell
                     $cmd = ['command' => $cmd];
                 }
                 $cmd += [
-                    'remote' => false
+                    'remote' => false,
                 ];
                 $config['pre-rsync-cmd'][$key] = $cmd;
             }
@@ -324,7 +324,7 @@ class RsyncShell extends Shell
                     $cmd = ['command' => $cmd];
                 }
                 $cmd += [
-                    'remote' => false
+                    'remote' => false,
                 ];
                 $config['post-rsync-cmd'][$key] = $cmd;
             }

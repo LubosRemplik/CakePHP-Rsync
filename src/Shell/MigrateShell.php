@@ -37,10 +37,10 @@ class MigrateShell extends Shell
                 'arguments' => [
                     'input' => [
                         'help' => 'Input file with yaml configuration',
-                        'required' => true
-                    ]
-                ]
-            ]
+                        'required' => true,
+                    ],
+                ],
+            ],
         ]);
 
         return $parser;
