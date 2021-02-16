@@ -270,9 +270,9 @@ class RsyncShell extends Shell
         }
 
         // format config, add defaults
-        $defaultParams = ["-azh --delete --stats"];
+        $defaultParams = ["-aW --inplace --delete --stats --info=progress2"];
         if ($this->params['verbose']) {
-            $defaultParams[] = '--progress';
+            $defaultParams[] = '-v';
         }
         $config += [
             'name' => false,
