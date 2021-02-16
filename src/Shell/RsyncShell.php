@@ -73,6 +73,9 @@ class RsyncShell extends Shell
             'help' => 'Do not execute pre and post rsync commands.',
             'boolean' => true,
         ]);
+        $parser->addOption('copies', [
+            'help' => 'If set, rewrites copies config from yaml',
+        ]);
 
         return $parser;
     }
@@ -297,6 +300,10 @@ class RsyncShell extends Shell
             'copies' => 1,
             'remote' => false,
         ];
+        // adjust copies
+        if (!empty($this->params['copies'])) {
+            $config['dest']['copies'] = $this->params['copies'];
+        }
         if (!is_array($config['params'])) {
             $config['params'] = [$config['params']];
         }
