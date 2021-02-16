@@ -73,6 +73,9 @@ class RsyncShell extends Shell
             'help' => 'Do not execute pre and post rsync commands.',
             'boolean' => true,
         ]);
+        $parser->addOption('dest-path', [
+            'help' => 'Possible to rewrite destination path (default: ~/:config-stem/:task-name/)',
+        ]);
         $parser->addOption('copies', [
             'help' => 'If set, rewrites copies config from yaml',
         ]);
@@ -100,6 +103,8 @@ class RsyncShell extends Shell
         if (!file_exists($file)) {
             throw new \Exception('Missing rsync.yml file with config');
         }
+
+        $this->config['file'] = $file;
 
         try {
             $rsyncs = Yaml::parse(file_get_contents($file));
@@ -277,6 +282,7 @@ class RsyncShell extends Shell
         if ($this->params['verbose']) {
             $defaultParams[] = '-v';
         }
+        $config += $this->config;
         $config += [
             'name' => false,
             'params' => $defaultParams,
@@ -303,6 +309,27 @@ class RsyncShell extends Shell
         // adjust copies
         if (!empty($this->params['copies'])) {
             $config['dest']['copies'] = $this->params['copies'];
+        }
+        // adjust destination path
+        $configStem = explode('.', basename($config['file']));
+        array_pop($configStem);
+        $configStem = implode('.', $configStem);
+        if (!empty($this->params['dest-path'])) {
+            $dest = $this->params['dest-path'];
+            $insertData = ['config-stem' => $configStem];
+            if ($config['name']) {
+                $insertData = ['task-name' => $config['name']];
+            }
+            $dest = Text::insert($dest, $insertData);
+            $config['dest']['path'] = $dest;
+        }
+
+        if (empty($config['dest']['path'])) {
+            $config['dest']['path'] .= '~/';
+            $config['dest']['path'] .= sprintf('%s/', $configStem);
+            if ($config['name']) {
+                $config['dest']['path'] .= sprintf('%s/', $config['name']);
+            }
         }
         if (!is_array($config['params'])) {
             $config['params'] = [$config['params']];
