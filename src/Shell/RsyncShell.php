@@ -267,12 +267,9 @@ class RsyncShell extends Shell
      */
     protected function config($config)
     {
-        // throw exception when missing src or dest
+        // throw exception when missing src
         if (!isset($config['src'])) {
             throw new \Exception('Missing rsync src (source) config');
-        }
-        if (!isset($config['dest'])) {
-            throw new \Exception('Missing rsync dest (destination) config');
         }
 
         // format config, add defaults
@@ -284,6 +281,7 @@ class RsyncShell extends Shell
             'name' => false,
             'params' => $defaultParams,
             'ssh' => [],
+            'dest' => [],
         ];
         $config['ssh'] += [
             'port' => 22,
