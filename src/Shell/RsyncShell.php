@@ -444,8 +444,11 @@ class RsyncShell extends Shell
         }
 
         if ($options['remote']) {
+            $ssh = $this->sshConnect();
+            if (!$ssh) {
+                return false;
+            }
             try {
-                $ssh = $this->sshConnect();
                 $output = $ssh->exec($command);
                 $code = $ssh->getExitStatus();
             } catch (\Exception $e) {
@@ -581,15 +584,13 @@ class RsyncShell extends Shell
             throw new \Exception('Missing SSH privateKey');
         }
 
-        $ssh = new SSH2($this->config['ssh']['host'], $this->config['ssh']['port']);
-        $ssh->setTimeout($this->config['ssh']['timeout']);
-
-        $key = new RSA();
-        $key->loadKey(file_get_contents($this->config['ssh']['privateKey']));
         try {
+            $ssh = new SSH2($this->config['ssh']['host'], $this->config['ssh']['port']);
+            $ssh->setTimeout($this->config['ssh']['timeout']);
+            $key = RSA::loadFormat('PKCS1', file_get_contents($this->config['ssh']['privateKey']));
             $login = $ssh->login($this->config['ssh']['username'], $key);
             $this->ssh = $login ? $ssh : false;
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $message = sprintf("SSH login failed; Message: %s", $e->getMessage());
             $this->err($message);
         }
