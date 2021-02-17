@@ -4,7 +4,6 @@ namespace Rsync\Shell;
 use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
 use Cake\Filesystem\Folder;
-use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
@@ -104,8 +103,6 @@ class RsyncShell extends Shell
             throw new \Exception('Missing rsync.yml file with config');
         }
 
-        $this->config['file'] = $file;
-
         try {
             $rsyncs = Yaml::parse(file_get_contents($file));
         } catch (ParseException $e) {
@@ -123,6 +120,7 @@ class RsyncShell extends Shell
             $start = microtime(true);
 
             // formating config
+            $rsync['file'] = $file;
             $this->config($rsync);
 
             // continue when task option != name
@@ -282,7 +280,6 @@ class RsyncShell extends Shell
         if ($this->params['verbose']) {
             $defaultParams[] = '-v';
         }
-        $config += $this->config;
         $config += [
             'name' => false,
             'params' => $defaultParams,
@@ -325,7 +322,7 @@ class RsyncShell extends Shell
         }
 
         if (empty($config['dest']['path'])) {
-            $config['dest']['path'] .= '~/';
+            $config['dest']['path'] = '~/';
             $config['dest']['path'] .= sprintf('%s/', $configStem);
             if ($config['name']) {
                 $config['dest']['path'] .= sprintf('%s/', $config['name']);
