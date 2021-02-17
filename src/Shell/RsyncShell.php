@@ -149,8 +149,16 @@ class RsyncShell extends Shell
 
             // execute pre rsync commands
             if (isset($this->config['pre-rsync-cmd']) && !$this->params['disable-pre-post']) {
+                $rsyncFailed = false;
                 foreach ($this->config['pre-rsync-cmd'] as $cmd) {
-                    $this->rsyncCmd($cmd);
+                    if ($this->rsyncCmd($cmd) === false) {
+                        $rsyncFailed = true;
+                    }
+                }
+                if ($rsyncFailed) {
+                    $message = sprintf('Pre rsync command(s) %s failed, continue with another task.', $name);
+                    $this->err($message);
+                    continue;
                 }
             }
 
@@ -233,9 +241,17 @@ class RsyncShell extends Shell
             }
 
             // execute post rsync commands
-            if (isset($this->config['post-rsync-cmd']) && !$this->params['disable-pre-post']) {
+            if (isset($this->config['post-rsync-cmd']) && !$this->params['disable-post-post']) {
+                $rsyncFailed = false;
                 foreach ($this->config['post-rsync-cmd'] as $cmd) {
-                    $this->rsyncCmd($cmd);
+                    if ($this->rsyncCmd($cmd) === false) {
+                        $rsyncFailed = true;
+                    }
+                }
+                if ($rsyncFailed) {
+                    $message = sprintf('Post rsync command(s) %s failed, continue with another task.', $name);
+                    $this->err($message);
+                    continue;
                 }
             }
 
@@ -497,7 +513,7 @@ class RsyncShell extends Shell
      * Formats and executes pre and post rsync commands
      *
      * @param string|array $cmd Command
-     * @return void
+     * @return bool
      */
     protected function rsyncCmd($cmd)
     {
@@ -535,6 +551,8 @@ class RsyncShell extends Shell
                 $this->out($out);
             }
         }
+
+        return $output === false ? false : true;
     }
 
     /**
