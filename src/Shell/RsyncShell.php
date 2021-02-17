@@ -108,7 +108,6 @@ class RsyncShell extends Shell
         } catch (ParseException $e) {
             $message = sprintf("Unable to parse the YAML string: %s", $e->getMessage());
             $this->error($message);
-            $this->log($message, 'error');
         }
 
         if (!isset($rsyncs[0])) {
@@ -145,7 +144,6 @@ class RsyncShell extends Shell
             if (isset($this->config['ssh']['host']) && !$this->sshConnect()) {
                 $message = sprintf('Task: %s; Unable to ssh connect, continue with another task.', $name);
                 $this->err($message);
-                $this->log($message, 'error');
                 continue;
             }
 
@@ -213,7 +211,6 @@ class RsyncShell extends Shell
             if ($output === false) {
                 $message = sprintf('Rsync %s failed. Exit code %s.', $name, $this->exitStatus);
                 $this->err($message);
-                $this->log($message, 'error');
             }
             // delete only when multiple folders
             if ($folders) {
@@ -437,8 +434,7 @@ class RsyncShell extends Shell
                 $code = $ssh->getExitStatus();
             } catch (\Exception $e) {
                 $message = sprintf("Unable to execute SSH command: %s; Message: %s", $command, $e->getMessage());
-                $this->error($message);
-                $this->log($message, 'error');
+                $this->err($message);
             }
         } else {
             try {
@@ -453,8 +449,7 @@ class RsyncShell extends Shell
                 $code = $process->getExitCode();
             } catch (\Exception $e) {
                 $message = sprintf("Unable to execute local command: %s; Message: %s", $command, $e->getMessage());
-                $this->error($message);
-                $this->log($message, 'error');
+                $this->err($message);
             }
         }
 
@@ -533,7 +528,6 @@ class RsyncShell extends Shell
                 $remote ? '<error>yes</error>' : 'no'
             );
             $this->out($out);
-            $this->log(strip_tags($out), 'error');
         }
 
         if ($this->output) {
@@ -579,8 +573,7 @@ class RsyncShell extends Shell
             $this->ssh = $login ? $ssh : false;
         } catch (\RuntimeException $e) {
             $message = sprintf("SSH login failed; Message: %s", $e->getMessage());
-            $this->error($message);
-            $this->log($message, 'error');
+            $this->err($message);
         }
 
         return $this->ssh;
