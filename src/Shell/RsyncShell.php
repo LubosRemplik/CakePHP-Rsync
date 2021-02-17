@@ -78,6 +78,12 @@ class RsyncShell extends Shell
         $parser->addOption('copies', [
             'help' => 'If set, rewrites copies config from yaml',
         ]);
+        $parser->addOption('append-rsync-params', [
+            'help' => 'If set, appends rsync default (yaml config) params',
+        ]);
+        $parser->addOption('replace-rsync-params', [
+            'help' => 'If set, replaces rsync default (yaml config) params (default: -aW --inplace --delete --stats)',
+        ]);
 
         return $parser;
     }
@@ -289,16 +295,22 @@ class RsyncShell extends Shell
         }
 
         // format config, add defaults
-        $defaultParams = ["-aW --inplace --delete --stats --info=progress2"];
-        if ($this->params['verbose']) {
-            $defaultParams[] = '-v';
-        }
+        $defaultParams = ["-aW --inplace --delete --stats"];
         $config += [
             'name' => false,
             'params' => $defaultParams,
             'ssh' => [],
             'dest' => [],
         ];
+        if (!empty($this->params['replace-rsync-params'])) {
+            $config['params'] = [$this->params['replace-rsync-params']];
+        }
+        if (!empty($this->params['append-rsync-params'])) {
+            $config['params'][] = $this->params['append-rsync-params'];
+        }
+        if ($this->params['verbose']) {
+            $config['params'][] = '-v --progress';
+        }
         $config['ssh'] += [
             'port' => 22,
             'timeout' => 5 * 60,
