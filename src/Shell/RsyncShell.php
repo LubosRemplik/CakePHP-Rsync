@@ -5,8 +5,8 @@ use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Text;
-use phpseclib\Crypt\RSA;
-use phpseclib\Net\SSH2;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\Net\SSH2;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -428,8 +428,8 @@ class RsyncShell extends Shell
         }
 
         if ($options['remote']) {
-            $ssh = $this->sshConnect();
             try {
+                $ssh = $this->sshConnect();
                 $output = $ssh->exec($command);
                 $code = $ssh->getExitStatus();
             } catch (\Exception $e) {
@@ -545,7 +545,7 @@ class RsyncShell extends Shell
      *
      * Connect to SSH via config property
      *
-     * @return bool|\phpseclib\Net\SSH2 $ssh SSH object, logged in
+     * @return bool|\phpseclib3\Net\SSH2 $ssh SSH object, logged in
      */
     protected function sshConnect()
     {
@@ -571,9 +571,14 @@ class RsyncShell extends Shell
 
         $key = new RSA();
         $key->loadKey(file_get_contents($this->config['ssh']['privateKey']));
-        $login = $ssh->login($this->config['ssh']['username'], $key);
-
-        $this->ssh = $login ? $ssh : false;
+        try {
+            $login = $ssh->login($this->config['ssh']['username'], $key);
+            $this->ssh = $login ? $ssh : false;
+        } catch (\RuntimeException $e) {
+            $message = sprintf("SSH login failed; Message: %s", $e->getMessage());
+            $this->error($message);
+            $this->log($message, 'error');
+        }
 
         return $this->ssh;
     }
