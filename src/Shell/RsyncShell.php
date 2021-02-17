@@ -131,6 +131,9 @@ class RsyncShell extends Shell
             // info about task when started
             $this->hr();
             $name = $this->config['name'];
+            if (empty($name)) {
+                $name = Text::uuid();
+            }
             $message = sprintf(
                 '<info>Rsync task %sstarted</info>',
                 $name ? sprintf('"%s" ', $name) : ''
@@ -140,7 +143,7 @@ class RsyncShell extends Shell
 
             // try remote, show error and continue with others when not able to connect
             if (isset($this->config['ssh']['host']) && !$this->sshConnect()) {
-                $message = sprintf('Task: %s; Unable to ssh connect, continue with another task.', $name ?? 'Unknown');
+                $message = sprintf('Task: %s; Unable to ssh connect, continue with another task.', $name);
                 $this->err($message);
                 $this->log($message, 'error');
                 continue;
@@ -208,7 +211,7 @@ class RsyncShell extends Shell
             $output = $this->execute($command, ['prompt' => true, 'showBuffer' => true]);
 
             if ($output === false) {
-                $message = sprintf('Rsync %s failed. Exit code %s.', $name ?? 'Unknown', $this->exitStatus);
+                $message = sprintf('Rsync %s failed. Exit code %s.', $name, $this->exitStatus);
                 $this->err($message);
                 $this->log($message, 'error');
             }
