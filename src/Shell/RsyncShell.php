@@ -341,7 +341,7 @@ class RsyncShell extends Shell
             $dest = $this->params['dest-path'];
             $insertData = ['config-stem' => $configStem];
             if ($config['name']) {
-                $insertData = ['task-name' => $config['name']];
+                $insertData['task-name'] = $config['name'];
             }
             $dest = Text::insert($dest, $insertData);
             $config['dest']['path'] = $dest;
@@ -469,7 +469,7 @@ class RsyncShell extends Shell
             }
         } else {
             try {
-                $process = new Process($command);
+                $process = Process::fromShellCommandline($command);
                 $process->setTimeout(false);
                 $process->run(function ($type, $buffer) use ($options) {
                     if ($options['showBuffer']) {
