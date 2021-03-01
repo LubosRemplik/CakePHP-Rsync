@@ -247,7 +247,7 @@ class RsyncShell extends Shell
             }
 
             // execute post rsync commands
-            if (isset($this->config['post-rsync-cmd']) && !$this->params['disable-post-post']) {
+            if (isset($this->config['post-rsync-cmd']) && !$this->params['disable-pre-post']) {
                 $rsyncFailed = false;
                 foreach ($this->config['post-rsync-cmd'] as $cmd) {
                     if ($this->rsyncCmd($cmd) === false) {
