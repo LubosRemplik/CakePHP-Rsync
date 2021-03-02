@@ -305,6 +305,9 @@ class RsyncShell extends Shell
         if (!empty($this->params['replace-rsync-params'])) {
             $config['params'] = [$this->params['replace-rsync-params']];
         }
+        if (!is_array($config['params'])) {
+            $config['params'] = [$config['params']];
+        }
         if (!empty($this->params['append-rsync-params'])) {
             $config['params'][] = $this->params['append-rsync-params'];
         }
